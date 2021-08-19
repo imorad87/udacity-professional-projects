@@ -90,8 +90,8 @@ section {
   transition: ease 0.3s all;
 }
 
-.navbar__menu .active {
-  background: #333;
+.navbar__menu .menu__link.active {
+  background-color: #333;
   color: #fff;
   transition: ease 0.3s all;
 }
@@ -199,17 +199,17 @@ section:nth-of-type(3n + 1) .landing__container::after {
 /* ---- Theme State Rules ---- */
 /* Section Active Styles */
 /* Note: your-active-class class is applied through javascript. You should update the class here and in the index.html to what you set in your javascript file.  */
-section.your-active-class {
+section.active-section {
   background: rgb(0, 0, 0);
   background: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
-section.your-active-class .landing__container::before {
+section.active-section .landing__container::before {
   opacity: 1;
   animation: rotate 4s linear 0s infinite forwards;
 }
 
-section.your-active-class .landing__container::after {
+section.active-section .landing__container::after {
   opacity: 1;
   animation: rotate 5s linear 0s infinite forwards reverse;
 }
@@ -221,5 +221,86 @@ section.your-active-class .landing__container::after {
   }
   to {
     transform: rotate(360deg) translate(-1em) rotate(-360deg);
+  }
+}
+
+#button {
+  position: fixed;
+  bottom: 90px;
+  right: 40px;
+  z-index: 9999;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  color: whitesmoke;
+  cursor: pointer;
+  border-radius: 2px;
+  display: none;
+}
+
+#button.show {
+  display: block;
+}
+
+/**
+* my CSS
+*/
+
+.nav > ul {
+  list-style-type: none;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.menuButton {
+  border: 0;
+  border-radius: 2px;
+  padding: 0.5em;
+  background-color: grey;
+  color: white;
+  padding-top: 1em;
+}
+
+.nav {
+  display: none;
+}
+
+@media only screen and (min-width: 32em) {
+  .nav {
+    display: block;
+  }
+}
+.navbar__menu {
+  padding: 1em;
+}
+
+@media only screen and (min-width: 32em) {
+  .navbar__menu li {
+    display: inline;
+    margin: 0 1.5em 0 0;
+  }
+  .navbar__menu li:last-child {
+    margin: 0;
+  }
+}
+.active {
+  display: block;
+}
+.active > ul {
+  display: flex;
+  flex-direction: column;
+  margin-top: 3.5em;
+}
+
+.menuButton {
+  position: absolute;
+  right: 0.5em;
+  top: 0.5em;
+}
+
+@media only screen and (min-width: 32em) {
+  .menuButton {
+    display: none;
   }
 }

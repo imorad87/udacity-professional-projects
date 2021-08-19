@@ -18,35 +18,51 @@
  *
  */
 const ACTIVE = "active";
-const YOUR_ACTIVE_CLASS = "your-active-class";
-let activeSection;
+const ACTIVE_SECTION = "active-section";
 const navBar = document.querySelector("#navbar__list");
-
+const backToTopButton = document.querySelector("#button");
 /**
  * End Global Variables
  * Start Helper Functions
  *
  */
+
+/**
+ * Check if the given element is currently displayed on the view.
+ * @param {*} elem the element to check
+ *
+ */
 const isInViewport = function (elem) {
   const bounding = elem.getBoundingClientRect();
-  return bounding.top >= 0 && bounding.left >= 0 && bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) && bounding.right <= (window.innerWidth || document.documentElement.clientWidth);
+  return bounding.top >= 0 && bounding.left >= 0 && bounding.bottom <= window.innerHeight && bounding.right <= window.innerWidth;
 };
 
+/**
+ * Reset the active state for each section
+ */
 const resetActiveSections = () => {
   const sections = document.querySelectorAll("section");
   sections.forEach((section) => {
     section.classList.remove(ACTIVE);
-    section.classList.remove(YOUR_ACTIVE_CLASS);
+    section.classList.remove(ACTIVE_SECTION);
   });
 };
 
+/**
+ * Reset the active state for each link
+ */
 const resetActiveNavLinks = () => {
   const navLinks = document.querySelectorAll(".menu__link");
-  navLinks.forEach((section) => {
-    section.classList.remove(ACTIVE);
+  navLinks.forEach((navLink) => {
+    navLink.classList.remove(ACTIVE);
   });
 };
 
+/**
+ * Sets a nav link as active. the nav link is selected based on the provided id
+ * @param {*} id the id for the item to be set as active.
+ * The id is the id of the active section that is displayed on the viewport
+ */
 const activateNavLink = (id) => {
   const navLinks = document.querySelectorAll(".menu__link");
   for (const navLink of navLinks) {
@@ -57,7 +73,11 @@ const activateNavLink = (id) => {
   }
 };
 
-const setupEventListeners = () => {
+/**
+ * setup up navLink listeners to handle the click event
+ * which is going to scroll to a specific sections based of the data attribute
+ */
+const setupLinkClickListener = () => {
   const navLinks = document.querySelectorAll("a.menu__link");
   for (const navLink of navLinks) {
     console.log(navLink);
@@ -67,6 +87,37 @@ const setupEventListeners = () => {
       el.scrollIntoView({ behavior: "smooth" });
     });
   }
+};
+
+/*
+ * Handle the back top top button. add an event listener to the scroll event and if the
+ * window is scrolled a button will show up on the bottom right corner of the screen
+ * and an event listener will be added to the button to scroll back to the top of the page
+ */
+const backToTopHandler = () => {
+  window.addEventListener("scroll", () => {
+    if (window.pageYOffset > 400) {
+      backToTopButton.classList.add("show");
+    } else {
+      backToTopButton.classList.remove("show");
+    }
+  });
+
+  backToTopButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({
+      top: 0,
+    });
+  });
+};
+
+/**
+ * show/hide the responsive menu when the screen size is mobile
+ */
+const responsiveMenuButtonHandler = () => {
+  const menuButton = document.querySelector(".menuButton");
+  const nav = document.querySelector(".navbar__menu");
+  menuButton.addEventListener("click", () => nav.classList.toggle("active"), false);
 };
 
 /**
@@ -95,20 +146,36 @@ function extractContent(tagToExtract) {
  */
 function buildNav(store) {
   if (store.length <= 0) {
-    throw new Error("array is empty");
+    throw new Error("no data to display");
   }
   // get the object keys and iterate over them to create each nav item using each
   // section's specific data (ex. id and data-nav)
   const ids = Object.keys(store);
+  console.log(ids.length);
   ids.forEach((id) => {
-    let item = document.createElement("li");
+    const item = document.createElement("li");
     item.innerHTML = `<a href="#" class="menu__link" data-navTo="${id}">${store[id]}<a>`;
-    navBar.append(item);
+    navBar.appendChild(item);
   });
 }
 
 // Add class 'active' to section when near top of viewport
-
+const setupActiveSectionListener = () => {
+  window.addEventListener("scroll", () => {
+    const keys = Object.keys(store);
+    for (const key of keys) {
+      const el = document.querySelector(`#${key}`);
+      if (isInViewport(el)) {
+        resetActiveSections();
+        el.classList.add(ACTIVE);
+        el.classList.add(ACTIVE_SECTION);
+        resetActiveNavLinks();
+        activateNavLink(key);
+        break;
+      }
+    }
+  });
+};
 // Scroll to anchor ID using scrollTO event
 
 /**
@@ -122,22 +189,13 @@ let store = extractContent("section");
 buildNav(store);
 
 // Scroll to section on link click
+setupLinkClickListener();
 
 // Set sections as active
+setupActiveSectionListener();
 
-window.addEventListener("scroll", () => {
-  const keys = Object.keys(store);
-  for (const key of keys) {
-    const el = document.querySelector(`#${key}`);
-    if (isInViewport(el)) {
-      resetActiveSections();
-      el.classList.add(ACTIVE);
-      el.classList.add(YOUR_ACTIVE_CLASS);
-      resetActiveNavLinks();
-      activateNavLink(key);
-      break;
-    }
-  }
-});
+//back to top button handler
+backToTopHandler();
 
-setupEventListeners();
+//show/hide navBar when on mobile
+responsiveMenuButtonHandler();
