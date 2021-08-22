@@ -34,7 +34,7 @@ const backToTopButton = document.querySelector("#button");
  */
 const isInViewport = function (elem) {
   const bounding = elem.getBoundingClientRect();
-  return bounding.top >= 0 && bounding.left >= 0 && bounding.bottom <= window.innerHeight && bounding.right <= window.innerWidth;
+  return bounding.top >= 0 && bounding.left >= 0 && bounding.right <= window.innerWidth;
 };
 
 /**
@@ -60,10 +60,11 @@ const resetActiveNavLinks = () => {
 
 /**
  * Sets a nav link as active. the nav link is selected based on the provided id
- * @param {*} id the id for the item to be set as active.
+ * @param {string} id the id for the item to be set as active.
  * The id is the id of the active section that is displayed on the viewport
  */
 const activateNavLink = (id) => {
+  resetActiveNavLinks();
   const navLinks = document.querySelectorAll(".menu__link");
   for (const navLink of navLinks) {
     if (navLink.dataset.navto === id) {
@@ -169,7 +170,6 @@ const setupActiveSectionListener = () => {
         resetActiveSections();
         el.classList.add(ACTIVE);
         el.classList.add(ACTIVE_SECTION);
-        resetActiveNavLinks();
         activateNavLink(key);
         break;
       }
